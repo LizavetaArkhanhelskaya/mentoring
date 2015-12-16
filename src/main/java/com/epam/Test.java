@@ -15,7 +15,7 @@ public class Test
    liza.setAge(22);
 
    Person ilya = new Person();
-   ilya.setName("Roma");
+   ilya.setName("Ilya");
    ilya.setAge(23);
 
    Person vlad = new Person();
@@ -24,20 +24,20 @@ public class Test
 
    System.out.println( "Start" );
 
-   Client client1 = new Client();
-   client1.chooseWriteReader("file","persons.txt");
-   client1.writePerson(ilya);
-   client1.writePerson(liza);
+   Client clientFile = new Client("file","persons.txt");
+   clientFile.writePerson(ilya);
+   clientFile.writePerson(liza);
+   clientFile.writePerson(vlad);
+   System.out.println("File: " + clientFile.readPerson());
+   System.out.println("File: " + clientFile.readPerson("Vlad"));
 
-   //System.out.println("File: " + client1.readPerson());
-   //System.out.println("File: "+client1.readPerson("Vlad"));
-/*
-   Client client2 = new Client();
-   client2.chooseWriteReader("DB","persons.txt");
-   client2.writePerson(ilya);
-   System.out.println("DB: "+client2.readPerson());
-   System.out.println("DB: "+client2.readPerson("Vlad"));
-*/
+   Client clientDB = new Client("DB",null);
+   clientDB.writePerson(ilya);
+   clientDB.writePerson(liza);
+   clientDB.writePerson(vlad);
+   System.out.println("DB: " + clientDB.readPerson());
+   System.out.println("DB: " + clientDB.readPerson("Vlad"));
+
    System.out.println( "End" );
  }
 }

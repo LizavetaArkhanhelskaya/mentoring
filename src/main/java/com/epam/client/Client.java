@@ -2,9 +2,10 @@ package com.epam.client;
 
 import com.epam.exceptions.BusinessException;
 import com.epam.model.Person;
-import com.epam.writeReader.PersonWriteReader;
-import com.epam.writeReader.impl.DBPersonWriteReader;
-import com.epam.writeReader.impl.FilePersonWriteReader;
+import com.epam.writeReader.personWriteReader.PersonWriteReader;
+import com.epam.writeReader.personWriteReaderFactory.PersonWriteReaderFactory;
+import com.epam.writeReader.personWriteReaderFactory.impl.DBPersonWriteReaderFactory;
+import com.epam.writeReader.personWriteReaderFactory.impl.FilePersonWriteReaderFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -14,44 +15,47 @@ public class Client
 {
   private PersonWriteReader personWriteReader;
 
-  public void chooseWriteReader(final String type, final String fileName)
+  public Client(final String type, final String fileName)
+    throws SQLException, IOException, ClassNotFoundException
   {
+    PersonWriteReaderFactory personWriteReaderFactory = null;
     if ( type != null )
     {
       if ( type.equals( "file" ) )
       {
-        System.out.println( "Client chooses file." );
-        personWriteReader = new FilePersonWriteReader(fileName);
-        return;
+        personWriteReaderFactory = new FilePersonWriteReaderFactory(fileName);
       }
       if ( type.equals( "DB" ) )
       {
-        System.out.println("Client chooses DB.");
-        personWriteReader = new DBPersonWriteReader();
-        return;
+        personWriteReaderFactory = new DBPersonWriteReaderFactory();
       }
     }
-    throw new BusinessException();
+
+    if (personWriteReaderFactory == null)
+    {
+      throw new BusinessException();
+    }
+    else
+    {
+      personWriteReader = personWriteReaderFactory.createWriteReader();
+    }
   }
 
   public void writePerson( final Person person )
     throws IOException, SQLException, ClassNotFoundException
   {
-    //System.out.println("Client writes person.");
-    personWriteReader.createWriter().writePerson( person );
+    personWriteReader.writePerson(person);
   }
 
   public List<Person> readPerson()
     throws IOException, SQLException, ClassNotFoundException
   {
-    //System.out.println("Client reads persons." );
-    return personWriteReader.createReader().readPersons();
+    return personWriteReader.readPersons();
   }
 
   public Person readPerson( final String name )
     throws IOException, SQLException, ClassNotFoundException
   {
-    //System.out.println("Client reads person by name." );
-    return personWriteReader.createReader().readPerson( name );
+    return personWriteReader.readPerson(name);
   }
 }
