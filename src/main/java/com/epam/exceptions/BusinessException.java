@@ -5,6 +5,6 @@ public class BusinessException
 {
   public BusinessException()
   {
-    System.out.println( "Business exception" );
+    System.out.println("Business exception");
   }
 }

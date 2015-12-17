@@ -1,5 +1,6 @@
 package com.epam.writeReader.personWriteReader.impl;
 
+import com.epam.exceptions.BusinessException;
 import com.epam.model.Person;
 import com.epam.writeReader.personWriteReader.PersonWriteReader;
 
@@ -23,45 +24,70 @@ public class FilePersonWriteReader
 
   @Override
   public void writePerson(final Person person)
-    throws IOException
   {
-    openWriter();
-    writer.write(person.toString());
-    closeWriter();
+    try
+    {
+      openWriter();
+      writer.write(person.toString());
+      closeWriter();
+    }
+    catch (IOException e)
+    {
+      throw new BusinessException();
+    }
   }
 
   @Override
   public List<Person> readPersons()
-    throws IOException
   {
-    openReader();
     List<Person> persons = new ArrayList<Person>();
-
-    String line = null;
-    while ((line = reader.readLine()) != null)
+    try
     {
-      String[] parts = line.split(SPACE);
-      persons.add( new Person(parts[0], Integer.parseInt( parts[1] ) ) );
+      openReader();
+      String line = null;
+      while ((line = reader.readLine()) != null)
+      {
+        String[] parts = line.split(SPACE);
+        persons.add(new Person(parts[0], Integer.parseInt(parts[1])));
+      }
+      closeReader();
     }
-    closeReader();
+    catch (FileNotFoundException e)
+    {
+      throw new BusinessException();
+    }
+    catch (IOException e)
+    {
+      throw new BusinessException();
+    }
     return persons;
   }
 
   @Override
   public Person readPerson(final String name)
-    throws IOException
   {
-    openReader();
-    String line = null;
-    while ((line = reader.readLine()) != null)
+    try
     {
-      String[] parts = line.split(SPACE);
-      if(parts[0].equals(name))
+      openReader();
+      String line = null;
+      while ((line = reader.readLine()) != null)
       {
-        return new Person( parts[0], Integer.parseInt( parts[1] ) );
+        String[] parts = line.split(SPACE);
+        if(parts[0].equals(name))
+        {
+          return new Person(parts[0], Integer.parseInt(parts[1]));
+        }
       }
+      closeReader();
     }
-    closeReader();
+    catch (FileNotFoundException e)
+    {
+      throw new BusinessException();
+    }
+    catch (IOException e)
+    {
+      throw new BusinessException();
+    }
     return null;
   }
 

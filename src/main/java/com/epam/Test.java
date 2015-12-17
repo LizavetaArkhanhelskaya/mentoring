@@ -3,13 +3,10 @@ package com.epam;
 import com.epam.client.Client;
 import com.epam.model.Person;
 
-import java.io.*;
-import java.sql.*;
-
 public class Test
 {
- public static void main( String[] args ) throws IOException, ClassNotFoundException, SQLException {
-
+ public static void main(String[] args)
+ {
    Person liza = new Person();
    liza.setName("Liza");
    liza.setAge(22);
@@ -22,22 +19,22 @@ public class Test
    vlad.setName("Vlad");
    vlad.setAge(9);
 
-   System.out.println( "Start" );
+   System.out.println("Start");
 
-   Client clientFile = new Client("file","persons.txt");
+   Client clientFile = new Client("file", "persons.txt");
    clientFile.writePerson(ilya);
    clientFile.writePerson(liza);
    clientFile.writePerson(vlad);
    System.out.println("File: " + clientFile.readPerson());
    System.out.println("File: " + clientFile.readPerson("Vlad"));
 
-   Client clientDB = new Client("DB",null);
+   Client clientDB = new Client("DB", null);
    clientDB.writePerson(ilya);
    clientDB.writePerson(liza);
    clientDB.writePerson(vlad);
    System.out.println("DB: " + clientDB.readPerson());
    System.out.println("DB: " + clientDB.readPerson("Vlad"));
 
-   System.out.println( "End" );
+   System.out.println("End");
  }
 }

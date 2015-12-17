@@ -1,5 +1,6 @@
 package com.epam.writeReader.personWriteReader.impl;
 
+import com.epam.exceptions.BusinessException;
 import com.epam.model.Person;
 import com.epam.writeReader.personWriteReader.PersonWriteReader;
 
@@ -15,59 +16,104 @@ public class DBPersonWriteReader
   private static final String SQL_SELECT_PERSONS = "select * from Person";
   private static final String SQL_SELECT_PERSON_BY_NAME = "select * from Person where Name = ?";
 
+  private static final String NAME_COLUMN = "Name";
+  private static final String AGE_COLUMN = "Age";
+
   private Connection connection;
 
   @Override
   public void writePerson(final Person person)
-    throws SQLException, ClassNotFoundException, IOException
   {
-    openConection();
-    PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PERSON);
-    statement.setString(1,person.getName());
-    statement.setInt(2, person.getAge());
-    statement.executeUpdate();
-    statement.close();
-    closeConnection();
+    try
+    {
+      openConection();
+      PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PERSON);
+      statement.setString(1, person.getName());
+      statement.setInt(2, person.getAge());
+      statement.executeUpdate();
+      statement.close();
+      closeConnection();
+    }
+    catch (ClassNotFoundException e)
+    {
+      throw new BusinessException();
+    }
+    catch (SQLException e)
+    {
+      throw new BusinessException();
+    }
+    catch (IOException e)
+    {
+      throw new BusinessException();
+    }
   }
 
   @Override
   public List<Person> readPersons()
-    throws SQLException, ClassNotFoundException, IOException
   {
-    openConection();
-    Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery(SQL_SELECT_PERSONS);
-
     List<Person> persons = new ArrayList<Person>();
-    while ( result.next())
+    try
     {
-      persons.add(new Person(result.getString("Name"),result.getInt("Age")));
-    }
+      openConection();
+      Statement statement = connection.createStatement();
+      ResultSet result = statement.executeQuery(SQL_SELECT_PERSONS);
 
-    result.close();
-    statement.close();
-    closeConnection();
+      while ( result.next())
+      {
+        persons.add(new Person(result.getString(NAME_COLUMN), result.getInt("Age")));
+      }
+
+      result.close();
+      statement.close();
+      closeConnection();
+    }
+    catch (ClassNotFoundException e)
+    {
+      throw new BusinessException();
+    }
+    catch (SQLException e)
+    {
+      throw new BusinessException();
+    }
+    catch (IOException e)
+    {
+      throw new BusinessException();
+    }
     return persons;
   }
 
   @Override
   public Person readPerson(final String name)
-    throws SQLException, ClassNotFoundException, IOException
   {
-    openConection();
-    PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PERSON_BY_NAME);
-    statement.setString(1,name);
-    ResultSet result = statement.executeQuery();
-
     Person person = null;
-    if ( result.next() )
+    try
     {
-      person = new Person(result.getString("Name"),result.getInt("Age"));
-    }
+      openConection();
+      PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PERSON_BY_NAME);
+      statement.setString(1,name);
+      ResultSet result = statement.executeQuery();
 
-    result.close();
-    statement.close();
-    closeConnection();
+      if ( result.next() )
+      {
+        person = new Person(result.getString(NAME_COLUMN), result.getInt(AGE_COLUMN));
+      }
+
+      result.close();
+      statement.close();
+      closeConnection();
+    }
+    catch (ClassNotFoundException e)
+    {
+      throw new BusinessException();
+    }
+    catch (SQLException e)
+    {
+      throw new BusinessException();
+    }
+    catch (IOException e)
+    {
+      throw new BusinessException();
+    }
     return person;
   }
 
@@ -77,6 +123,7 @@ public class DBPersonWriteReader
     Class.forName("oracle.jdbc.driver.OracleDriver");
     this.connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "system");
   }
+
   private void closeConnection()
     throws IOException, SQLException
   {
