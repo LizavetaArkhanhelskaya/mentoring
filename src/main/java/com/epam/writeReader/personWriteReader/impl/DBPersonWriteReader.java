@@ -1,10 +1,12 @@
 package com.epam.writeReader.personWriteReader.impl;
 
+import com.epam.connection.DBConnectionFacade;
+import com.epam.connection.impl.PersonDBConnection;
 import com.epam.exceptions.BusinessException;
+import com.epam.exceptions.DatabaseConnectionException;
 import com.epam.model.Person;
 import com.epam.writeReader.personWriteReader.PersonWriteReader;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,30 +21,32 @@ public class DBPersonWriteReader
   private static final String NAME_COLUMN = "Name";
   private static final String AGE_COLUMN = "Age";
 
-  private Connection connection;
+  private DBConnectionFacade dbConnection;
+
+  public DBPersonWriteReader()
+  {
+    dbConnection = new PersonDBConnection();
+    dbConnection.loadDriver();
+  }
 
   @Override
   public void writePerson(final Person person)
   {
     try
     {
-      openConection();
+      Connection connection = dbConnection.createConnection();
       PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PERSON);
       statement.setString(1, person.getName());
       statement.setInt(2, person.getAge());
       statement.executeUpdate();
       statement.close();
-      closeConnection();
+      dbConnection.closeConnection(connection);
     }
-    catch (ClassNotFoundException e)
+    catch (DatabaseConnectionException e)
     {
       throw new BusinessException();
     }
     catch (SQLException e)
-    {
-      throw new BusinessException();
-    }
-    catch (IOException e)
     {
       throw new BusinessException();
     }
@@ -54,7 +58,7 @@ public class DBPersonWriteReader
     List<Person> persons = new ArrayList<Person>();
     try
     {
-      openConection();
+      Connection connection = dbConnection.createConnection();
       Statement statement = connection.createStatement();
       ResultSet result = statement.executeQuery(SQL_SELECT_PERSONS);
 
@@ -65,17 +69,13 @@ public class DBPersonWriteReader
 
       result.close();
       statement.close();
-      closeConnection();
+      dbConnection.closeConnection(connection);
     }
-    catch (ClassNotFoundException e)
+    catch (DatabaseConnectionException e)
     {
       throw new BusinessException();
     }
     catch (SQLException e)
-    {
-      throw new BusinessException();
-    }
-    catch (IOException e)
     {
       throw new BusinessException();
     }
@@ -88,7 +88,7 @@ public class DBPersonWriteReader
     Person person = null;
     try
     {
-      openConection();
+      Connection connection = dbConnection.createConnection();
       PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PERSON_BY_NAME);
       statement.setString(1,name);
       ResultSet result = statement.executeQuery();
@@ -100,9 +100,9 @@ public class DBPersonWriteReader
 
       result.close();
       statement.close();
-      closeConnection();
+      dbConnection.closeConnection(connection);
     }
-    catch (ClassNotFoundException e)
+    catch (DatabaseConnectionException e)
     {
       throw new BusinessException();
     }
@@ -110,23 +110,6 @@ public class DBPersonWriteReader
     {
       throw new BusinessException();
     }
-    catch (IOException e)
-    {
-      throw new BusinessException();
-    }
     return person;
-  }
-
-  private void openConection()
-    throws ClassNotFoundException, SQLException
-  {
-    Class.forName("oracle.jdbc.driver.OracleDriver");
-    this.connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "system");
-  }
-
-  private void closeConnection()
-    throws IOException, SQLException
-  {
-    connection.close();
   }
 }
