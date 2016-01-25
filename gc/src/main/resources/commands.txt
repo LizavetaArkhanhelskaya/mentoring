@@ -1,0 +1,49 @@
+1) Serial Collector with the following parameters
+
+the 6m initial heap size for when the JVM starts
+the18m maximum heap size
+the2m size of the Young Generation
+the 20m starting size of the Permanent Generation
+the 30 maximum size of the Permanent Generation
+
+Command: -Xms6m -Xmx18m -XX:PermSize=20m -XX:MaxPermSize=30m -XX:NewSize=2m -XX:MaxNewSize=2m -XX:+UseSerialGC
+
+2)  Parallel Collector with the following parameters
+
+the 3m initial heap size for when the JVM starts
+the12m maximum heap size
+the1m size of the Young Generation
+the 20m starting size of the Permanent Generation
+the 20 maximum size of the Permanent Generation
+
+Command: -Xms3m -Xmx12m -XX:PermSize=20m -XX:MaxPermSize=20m -XX:NewSize=1m -XX:MaxNewSize=1m -XX:+UseParallelGC
+
+3) Parallel Old Collector with the following parameters
+
+the 9m initial heap size for when the JVM starts
+the18m maximum heap size
+the3m size of the Young Generation
+the 40m starting size of the Permanent Generation
+the 40 maximum size of the Permanent Generation
+
+Command: -Xms9m -Xmx18m -XX:PermSize=40m -XX:MaxPermSize=40m -XX:NewSize=3m -XX:MaxNewSize=3m -XX:+UseParallelOldGC
+
+4) Concurrent Mark Sweep (CMS) Collector  with 2 Parallel CMS Threads  with the following parameters
+
+the 6m initial heap size for when the JVM starts
+the18m maximum heap size
+the 2m size of the Young Generation
+the 20m starting size of the Permanent Generation
+the 30 maximum size of the Permanent Generatio
+
+Command: -Xms6m -Xmx18m -XX:PermSize=20m -XX:MaxPermSize=30m -XX:NewSize=2m -XX:MaxNewSize=2m -XX:+UseConcMarkSweepGC
+
+5) G1 Garbage Collector with the following parameters
+
+the 4m initial heap size for when the JVM starts
+the16m maximum heap size
+them 2m size of the Young Generation
+the 12m starting size of the Permanent Generation
+the 18 maximum size of the Permanent Generation
+
+Command: -Xms4m -Xmx16m -XX:PermSize=12m -XX:MaxPermSize=18m -XX:NewSize=2m -XX:MaxNewSize=2m -XX:+UseG1GC
