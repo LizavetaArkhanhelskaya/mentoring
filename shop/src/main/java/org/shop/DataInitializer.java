@@ -1,5 +1,7 @@
 package org.shop;
 
+import org.shop.api.impl.UserServiceImpl;
+import org.shop.repository.factory.UserRepositoryFactory;
 
 /**
  * The main Data Initializer util class.
@@ -46,5 +48,11 @@ public class DataInitializer {
         userInitializer.initUsers();
         productInitializer.initProducts();
         proposalInitializer.initProposals();
+    }
+
+    public void initMethod() {
+      UserServiceImpl userService = new UserServiceImpl();
+      userService.populate( new UserRepositoryFactory().createUserRepository() );
+      userInitializer = new UserInitializer( userService );
     }
 }
